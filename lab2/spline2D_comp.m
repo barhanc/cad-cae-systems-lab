@@ -195,11 +195,9 @@ function spline2D()
                 vy = compute_spline(knot_vectory, py, j, Y);
                 Z = Z + coeffs(i,j) .* vx .* vy;
             end
-
         end
         
         surf(X, Y, Z);
-        colormap winter
         shading interp
         axis tight
         hold off
