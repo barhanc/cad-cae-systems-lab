@@ -128,11 +128,35 @@ function spline2D()
     end
 
     function spline2Duniform()
-        knot_vectorx = [0 1 2]
+                   
+        coeffs = [0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1;
+                0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 1;
+                1 0 1 1 1 0 1 0 1 1 1 1 1 0 1 1 1 1 1 0 1;
+                1 0 1 0 1 0 1 0 1 0 1 0 1 0 0 0 0 0 0 0 1;
+                1 1 1 0 1 0 1 0 1 0 1 0 1 0 1 1 1 1 1 1 1;
+                1 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1;
+                1 0 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 0 1;
+                1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 0 0 1;
+                1 0 1 1 1 0 1 0 1 1 1 1 1 1 1 0 1 1 1 0 1;
+                1 0 1 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 1;
+                1 1 1 1 1 0 1 0 1 0 1 1 1 0 1 1 1 1 1 0 1;
+                1 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 1;
+                1 1 1 1 1 1 1 0 1 0 1 1 1 1 1 0 1 0 1 1 1;
+                1 0 0 0 0 0 0 0 1 0 1 0 1 0 1 0 1 0 0 0 1;
+                1 0 1 0 1 1 1 0 1 1 1 0 1 0 1 0 1 1 1 0 1;
+                1 0 1 0 1 0 0 0 1 0 1 0 0 0 1 0 0 0 1 0 1;
+                1 0 1 1 1 0 1 1 1 0 1 0 1 1 1 0 1 1 1 1 1;
+                1 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 1 0 0 0 1;
+                1 0 1 1 1 1 1 0 1 1 1 0 1 1 1 0 1 0 1 1 1;
+                1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0;
+                1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0;
+                ];
 
-        knot_vectory = [0 1 2]
-
-        precision = 0.01
+        [Nx, Ny] = size(coeffs);
+        knot_vectorx = 0:Nx;
+        knot_vectory = 0:Ny;
+       
+        precision = 0.001;
 
         %macros
         compute_nr_basis_functions = @(knot_vector, p) size(knot_vector, 2) - p - 1
@@ -160,8 +184,8 @@ function spline2D()
 
         %X and Y coordinates of points over the 2D mesh
         [X, Y] = meshgrid(x, y);
-
-        hold on
+                     
+        Z = zeros(numel(x), numel(y));
 
         for i = 1:nrx
             %compute values of
@@ -169,11 +193,15 @@ function spline2D()
 
             for j = 1:nry
                 vy = compute_spline(knot_vectory, py, j, Y);
-                surf(X, Y, vx .* vy);
+                Z = Z + coeffs(i,j) .* vx .* vy;
             end
 
         end
-
+        
+        surf(X, Y, Z);
+        colormap winter
+        shading interp
+        axis tight
         hold off
 
     end
@@ -236,7 +264,7 @@ function spline2D()
         d = knot_vector(nr + p + 1);
 
         if (p == 0)
-            y = 0 .* (x < a) + 1 .* (a <= x & x <= d) + 0 .* (x > d);
+            y = 0 .* (x < a) + 1 .* (a <= x & x < d) + 0 .* (x > d);
             return
         end
 
