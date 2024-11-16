@@ -379,8 +379,8 @@ set(gca,'color','none');
 
 view(-90,95);
 
-framerate = 15;
-duration = 8; % s
+framerate = 10;
+duration = 3; % s
 
 n_frames=framerate * duration;
 angle= 360 / n_frames;
